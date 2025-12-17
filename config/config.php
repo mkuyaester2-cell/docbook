@@ -1,0 +1,26 @@
+<?php
+// config/config.php
+
+// Database Credentials
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'docbook');
+
+// Application Settings
+define('APP_NAME', 'DocBook');
+define('APP_URL', 'http://localhost/doctor-appointment-2');
+
+// Error Reporting (Enable for development)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Set Timezone
+date_default_timezone_set('Asia/Kolkata'); // Adjust based on user location if known, generic for now
+
+// Start Session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
