@@ -3,9 +3,9 @@
 
 // Database Credentials
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'webtech_2025A_ester_mkuya');
+define('DB_USER', 'ester.mkuya');
+define('DB_PASS', '95079507');
+define('DB_NAME', 'webtech_2025a_ester_mkuya');
 
 // Application Settings
 define('APP_NAME', 'DocBook');

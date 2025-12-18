@@ -4,8 +4,8 @@
 class Database {
     private $host = 'localhost';
     private $db_name = 'webtech_2025a_ester_mkuya';
-    private $username = 'root';
-    private $password = '';
+    private $username = 'ester.mkuya';
+    private $password = '95079507';
     private $conn;
 
     // Singleton instance
