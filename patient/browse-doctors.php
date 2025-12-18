@@ -15,7 +15,7 @@ $query = "SELECT d.*, c.name as clinic_name, a.city, a.street_address
           FROM doctors d
           JOIN clinics c ON d.clinic_id = c.id
           JOIN addresses a ON c.address_id = a.id
-          WHERE 1=1";
+          WHERE d.registration_status = 'approved'";
 $params = [];
 
 if ($search) {

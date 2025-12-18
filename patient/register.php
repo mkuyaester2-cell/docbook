@@ -182,6 +182,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             Already have an account? 
                             <a href="<?php echo APP_URL; ?>/login.php" class="font-bold text-primary-600 hover:text-primary-500 px-1">Login here</a>
                         </p>
+                        <p class="text-xs text-slate-400 mt-2">
+                            Are you a healthcare professional? 
+                            <a href="<?php echo APP_URL; ?>/doctor/register.php" class="font-semibold text-slate-500 hover:text-primary-600 underline">Join as a Doctor</a>
+                        </p>
                     </div>
                 </form>
             </div>

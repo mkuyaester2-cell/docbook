@@ -47,7 +47,7 @@
                 <h3 class="font-bold text-slate-800 mb-4">For Doctors</h3>
                 <ul class="space-y-3 text-sm text-slate-500">
                     <li><a href="<?php echo APP_URL; ?>/login.php" class="hover:text-primary-600 transition-colors">Doctor Login</a></li>
-                    <li><a href="#" class="hover:text-primary-600 transition-colors">Join as a Doctor</a></li>
+                    <li><a href="<?php echo APP_URL; ?>/doctor/register.php" class="hover:text-primary-600 transition-colors">Join as a Doctor</a></li>
                     <li><a href="#" class="hover:text-primary-600 transition-colors">Practice Management</a></li>
                     <li><a href="#" class="hover:text-primary-600 transition-colors">Success Stories</a></li>
                 </ul>

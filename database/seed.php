@@ -69,7 +69,7 @@ try {
         $doc_user_id = $db->lastInsertId();
 
         // Doctor Profile
-        $stmt = $db->prepare("INSERT INTO doctors (user_id, full_name, specialization, qualification, experience_years, phone, bio, profile_image, clinic_id, address_id, consultation_fee) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO doctors (user_id, full_name, specialization, qualification, experience_years, phone, bio, profile_image, clinic_id, address_id, consultation_fee, registration_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')");
         $stmt->execute([
             $doc_user_id,
             $doc['name'],
