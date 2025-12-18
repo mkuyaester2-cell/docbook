@@ -11,13 +11,13 @@ try {
 
     // 1. Create Addresses
     $addresses = [
-        ['123 Main St', 'New York', 'NY', '10001'], // Admin/Clinic
-        ['456 Elm St', 'New York', 'NY', '10002'], // Doctor 1
-        ['789 Oak St', 'Brooklyn', 'NY', '11201'], // Doctor 2
+        ['123 Samora Ave', 'Dar es Salaam', 'TZ', '11101'], // Admin/Clinic
+        ['456 Ali Hassan Mwinyi Rd', 'Dar es Salaam', 'TZ', '14111'], // Doctor 1
+        ['789 Njiro Rd', 'Arusha', 'TZ', '23100'], // Doctor 2
     ];
     
     $address_ids = [];
-    $stmt = $db->prepare("INSERT INTO addresses (street_address, city, state, postal_code) VALUES (?, ?, ?, ?)");
+    $stmt = $db->prepare("INSERT INTO addresses (street_address, city, state, postal_code, country) VALUES (?, ?, ?, ?, 'Tanzania')");
     foreach ($addresses as $addr) {
         $stmt->execute($addr);
         $address_ids[] = $db->lastInsertId();
@@ -27,37 +27,37 @@ try {
     // 2. Create Admin User
     $admin_pass = password_hash('admin123', PASSWORD_BCRYPT);
     $stmt = $db->prepare("INSERT INTO users (email, password_hash, user_type) VALUES (?, ?, 'admin')");
-    $stmt->execute(['admin@docbook.com', $admin_pass]);
+    $stmt->execute(['admin@docbook.co.tz', $admin_pass]);
     $admin_user_id = $db->lastInsertId();
 
-    $stmt = $db->prepare("INSERT INTO admins (user_id, full_name, phone) VALUES (?, 'System Administrator', '555-0000')");
+    $stmt = $db->prepare("INSERT INTO admins (user_id, full_name, phone) VALUES (?, 'System Administrator', '0755-000000')");
     $stmt->execute([$admin_user_id]);
-    echo "✅ Admin seeded (admin@docbook.com / admin123).\n";
+    echo "✅ Admin seeded (admin@docbook.co.tz / admin123).\n";
 
     // 3. Create Clinic
     $stmt = $db->prepare("INSERT INTO clinics (name, address_id, phone, email, created_by) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute(['City Health Center', $address_ids[0], '555-1234', 'info@cityhealth.com', $admin_user_id]);
+    $stmt->execute(['Afya Bora Medical Centre', $address_ids[0], '0755-123456', 'info@afyabora.co.tz', $admin_user_id]);
     $clinic_id = $db->lastInsertId();
     echo "✅ Clinic seeded.\n";
 
     // 4. Create Doctors
     $doctors = [
         [
-            'name' => 'Dr. Anita Kapoor',
-            'email' => 'anita@docbook.com',
+            'name' => 'Dr. Amani Mushi',
+            'email' => 'amani@docbook.co.tz',
             'spec' => 'General Physician',
             'qual' => 'MBBS, MD',
             'exp' => 12,
-            'fee' => 50.00,
+            'fee' => 50000.00,
             'img' => 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300'
         ],
         [
-            'name' => 'Dr. James Wilson',
-            'email' => 'james@docbook.com',
+            'name' => 'Dr. Baraka Juma',
+            'email' => 'baraka@docbook.co.tz',
             'spec' => 'Cardiologist',
-            'qual' => 'MBBS, MD, DM',
+            'qual' => 'MBBS, MD, MMed',
             'exp' => 15,
-            'fee' => 80.00,
+            'fee' => 80000.00,
             'img' => 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300'
         ]
     ];
@@ -76,8 +76,8 @@ try {
             $doc['spec'],
             $doc['qual'],
             $doc['exp'],
-            '555-010' . $idx,
-            'Experienced specialist dedicated to patient care.',
+            '0655-010' . $idx . '00',
+            'Specialist at Afya Bora dedicated to patient care in Tanzania.',
             $doc['img'],
             $clinic_id,
             $address_ids[$idx + 1],
@@ -86,7 +86,7 @@ try {
         $doctor_id = $db->lastInsertId();
 
         // Availability (Mon-Fri, 9AM - 5PM)
-        $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '14:00:00', 90)"); // 9AM-2PM for shorter test
+        $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '14:00:00', 30)"); // 30 min slots
         for ($day = 1; $day <= 5; $day++) {
             $stmt->execute([$doctor_id, $day]);
         }

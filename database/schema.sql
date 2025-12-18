@@ -2,8 +2,8 @@
 -- Database: docbook
 
 -- Create Database if not exists
-CREATE DATABASE IF NOT EXISTS `docbook`;
-USE `docbook`;
+CREATE DATABASE IF NOT EXISTS `webtech_2025A_ester_mkuya`;
+USE `webtech_2025A_ester_mkuya`;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
