@@ -3,7 +3,7 @@
 
 class Database {
     private $host = 'localhost';
-    private $db_name = 'webtech_2025A_ester_mkuya';
+    private $db_name = 'webtech_2025a_ester_mkuya';
     private $username = 'root';
     private $password = '';
     private $conn;
