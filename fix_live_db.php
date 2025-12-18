@@ -78,28 +78,36 @@ try {
         echo "The 'registration_status' column exists.<br>";
     }
 
-    // 3. Fix Missing Availability
-    if (isset($_GET['fix_availability'])) {
-        echo "<b>Repairing Doctor Schedules...</b><br>";
-        $doctors = $db->query("SELECT id, full_name FROM doctors")->fetchAll();
-        $fixedCount = 0;
-        
-        foreach ($doctors as $doc) {
-            $checkAvail = $db->prepare("SELECT COUNT(*) FROM doctor_availability WHERE doctor_id = ?");
-            $checkAvail->execute([$doc['id']]);
-            if ($checkAvail->fetchColumn() == 0) {
-                echo "- Adding default schedule for " . htmlspecialchars($doc['full_name']) . "...<br>";
-                $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '14:00:00', 30)");
-                for ($day = 1; $day <= 5; $day++) {
-                    $stmt->execute([$doc['id'], $day]);
-                }
-                $fixedCount++;
-            }
+    // List recent users to prove they are here
+    echo "<br><b>Doctor Availability Check:</b><br>";
+    $availTable = $db->query("SELECT d.id, d.full_name, (SELECT COUNT(*) FROM doctor_availability WHERE doctor_id = d.id) as days_count FROM doctors d")->fetchAll();
+    echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
+    echo "<tr style='background: #eee;'><th>ID</th><th>Name</th><th>Schedules Found</th><th>Action</th></tr>";
+    foreach ($availTable as $row) {
+        echo "<tr>";
+        echo "<td style='padding:5px;'>".$row['id']."</td>";
+        echo "<td style='padding:5px;'>".htmlspecialchars($row['full_name'])."</td>";
+        echo "<td style='padding:5px;'>".$row['days_count']."</td>";
+        echo "<td style='padding:5px;'><a href='fix_live_db.php?fix_doc_id=".$row['id']."'>[Force Add Schedule]</a></td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+
+    // Individual Doctor Fix
+    if (isset($_GET['fix_doc_id'])) {
+        $id = (int)$_GET['fix_doc_id'];
+        echo "<br><b>Fixing Doctor ID $id...</b><br>";
+        // Remove old if any
+        $db->prepare("DELETE FROM doctor_availability WHERE doctor_id = ?")->execute([$id]);
+        // Add new
+        $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '17:00:00', 30)");
+        for ($day = 0; $day <= 6; $day++) { // All days Mon-Sun for testing
+            $stmt->execute([$id, $day]);
         }
-        echo "<span style='color:green'>Fixed $fixedCount doctors!</span><br>";
+        echo "<span style='color:green'>Success! Day 0-6 added for Doctor $id.</span><br>";
+        echo "<script>setTimeout(() => { window.location.href='fix_live_db.php'; }, 2000);</script>";
     }
 
-    // List recent users to prove they are here
     echo "<br><b>Recently Registered Users (Last 5):</b><br>";
     $recentUsers = $db->query("SELECT email, user_type, created_at FROM users ORDER BY created_at DESC LIMIT 5")->fetchAll();
     if (empty($recentUsers)) {
@@ -112,8 +120,8 @@ try {
     
     echo "<br><div style='padding:20px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px;'>";
     echo "<b>Troubleshooting & Utilities:</b><br>";
-    echo "1. <a href='fix_live_db.php?seed_admin=1' style='color:red; font-weight:bold;'>CLICK HERE TO RESET/CREATE ADMIN (admin@docbook.co.tz / admin123)</a><br>";
-    echo "2. <a href='fix_live_db.php?fix_availability=1' style='color:blue; font-weight:bold;'>CLICK HERE TO FIX MISSING DOCTOR TIMES/DATES</a><br>";
+    echo "1. <a href='fix_live_db.php?seed_admin=1' style='color:red; font-weight:bold;'>CLICK HERE TO RESET/CREATE ADMIN</a><br>";
+    echo "2. <a href='fix_live_db.php?fix_availability=1' style='color:blue; font-weight:bold;'>CLICK HERE TO FIX ALL MISSING TIMES</a><br>";
     echo "3. <a href='patient/browse-doctors.php'>Go to Find Doctors</a><br>";
     echo "4. <a href='login.php'>Go to Login Page</a><br>";
     echo "5. <a href='index.php'>Go to Homepage</a><br>";
