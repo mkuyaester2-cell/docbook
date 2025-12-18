@@ -3,13 +3,13 @@
 
 // Database Credentials
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'docbook');
+define('DB_USER', 'ester.mkuya');
+define('DB_PASS', '95079507');
+define('DB_NAME', 'webtech_2025A_ester_mkuya');
 
 // Application Settings
 define('APP_NAME', 'DocBook');
-define('APP_URL', 'http://localhost/doctor-appointment-2');
+define('APP_URL', 'http://169.239.251.102:311/~ester.mkuya/doctor-appointment-2');
 
 // Error Reporting (Enable for development)
 ini_set('display_errors', 1);
