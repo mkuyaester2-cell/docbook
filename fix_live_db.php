@@ -101,10 +101,10 @@ try {
         $db->prepare("DELETE FROM doctor_availability WHERE doctor_id = ?")->execute([$id]);
         // Add new
         $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '17:00:00', 30)");
-        for ($day = 0; $day <= 6; $day++) { // All days Mon-Sun for testing
+        for ($day = 1; $day <= 6; $day++) { // Mon to Sat
             $stmt->execute([$id, $day]);
         }
-        echo "<span style='color:green'>Success! Day 0-6 added for Doctor $id.</span><br>";
+        echo "<span style='color:green'>Success! Monday to Saturday added for Doctor $id.</span><br>";
         echo "<script>setTimeout(() => { window.location.href='fix_live_db.php'; }, 2000);</script>";
     }
 
@@ -118,7 +118,13 @@ try {
         }
     }
     
-    echo "<br><div style='padding:20px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px;'>";
+    echo "<br><div style='padding:20px; background:#fff7ed; border:1px solid #fed7aa; border-radius:8px;'>";
+    echo "<b>⚠️ IMPORTANT: If the calendar is still empty:</b><br>";
+    echo "1. Press <b>CTRL + F5</b> on the booking page to clear your browser cache.<br>";
+    echo "2. Check if the Doctor Name on the booking page matches the ID you fixed above.<br>";
+    echo "</div><br>";
+
+    echo "<div style='padding:20px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px;'>";
     echo "<b>Troubleshooting & Utilities:</b><br>";
     echo "1. <a href='fix_live_db.php?seed_admin=1' style='color:red; font-weight:bold;'>CLICK HERE TO RESET/CREATE ADMIN</a><br>";
     echo "2. <a href='fix_live_db.php?fix_availability=1' style='color:blue; font-weight:bold;'>CLICK HERE TO FIX ALL MISSING TIMES</a><br>";

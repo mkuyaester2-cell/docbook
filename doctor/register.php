@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $doctor_id = $db->lastInsertId();
 
-            // 3. Create Default Availability (Mon-Fri, 9AM-2PM)
-            $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '14:00:00', 30)");
-            for ($day = 1; $day <= 5; $day++) {
+            // 3. Create Default Availability (Mon-Sat, 9AM-5PM)
+            $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '17:00:00', 30)");
+            for ($day = 1; $day <= 6; $day++) { // 1=Mon, 6=Sat
                 $stmt->execute([$doctor_id, $day]);
             }
             
