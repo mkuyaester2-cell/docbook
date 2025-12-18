@@ -116,7 +116,7 @@ $specsObj = $db->query("SELECT DISTINCT specialization FROM doctors ORDER BY spe
                         <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
                             <div>
                                 <p class="text-xs text-slate-400">Consultation Fee</p>
-                                <p class="text-lg font-bold text-slate-900">$<?php echo number_format($doc['consultation_fee'], 0); ?></p>
+                                <p class="text-lg font-bold text-slate-900">TZS <?php echo number_format($doc['consultation_fee'], 0); ?></p>
                             </div>
                             <a href="book-appointment.php?doctor_id=<?php echo $doc['id']; ?>" class="bg-slate-900 hover:bg-primary-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors">
                                 Book Now
