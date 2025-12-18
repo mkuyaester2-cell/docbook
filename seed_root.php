@@ -4,6 +4,31 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/Database.php';
 
 try {
+    // DEBUG: Diagnostic block
+    $envPath = __DIR__ . '/.env';
+    echo "[DEBUG] Checking environment...\n";
+    echo "[DEBUG] Looking for .env at: " . $envPath . "\n";
+    if (file_exists($envPath)) {
+        echo "[DEBUG] .env file FOUND.\n";
+        if (is_readable($envPath)) {
+            echo "[DEBUG] .env file is READABLE.\n";
+            // Check formatted content
+            $content = file_get_contents($envPath);
+            echo "[DEBUG] First 50 chars of .env: " . substr($content, 0, 50) . "...\n";
+        } else {
+            echo "[DEBUG] ERROR: .env file is NOT READABLE (Check Permissions).\n";
+        }
+    } else {
+        echo "[DEBUG] ERROR: .env file NOT FOUND at this path.\n";
+    }
+    
+    echo "[DEBUG] Resolved DB Config:\n";
+    echo "  - Host: " . DB_HOST . "\n";
+    echo "  - User: " . DB_USER . "\n";
+    echo "  - Pass: " . (DB_PASS ? '[HIDDEN]' : '[EMPTY]') . "\n";
+    echo "  - Name: " . DB_NAME . "\n";
+    echo "--------------------------\n";
+
     $db = Database::getInstance();
     $db->beginTransaction();
 
