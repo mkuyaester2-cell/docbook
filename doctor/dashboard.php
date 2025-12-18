@@ -43,6 +43,20 @@ if ($hasRegistrationStatus) {
     }
 }
 
+// Handle Appointment Actions - MUST BE BEFORE HEADER
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appt_action']) && isset($_POST['appointment_id'])) {
+    $appt_id = $_POST['appointment_id'];
+    $new_status = ($_POST['appt_action'] === 'confirm') ? 'confirmed' : 'cancelled';
+    
+    // Security check: ensure this appointment belongs to this doctor
+    $stmt = $db->prepare("UPDATE appointments SET status = ? WHERE id = ? AND doctor_id = ?");
+    $stmt->execute([$new_status, $appt_id, $doctor_id]);
+    
+    Session::setFlash('success', 'Appointment ' . $new_status . ' successfully.');
+    header("Location: dashboard.php");
+    exit;
+}
+
 define('PAGE_TITLE', 'Doctor Dashboard');
 require_once __DIR__ . '/../includes/header.php';
 
@@ -96,8 +110,13 @@ $today_appts = $stmt->fetchColumn();
                         <i class="fa-solid fa-wallet"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-slate-500">Daily Earnings</p>
-                        <h3 class="text-2xl font-bold text-slate-900">TZS <?php echo number_format($today_appts * $doctor['consultation_fee'], 0); ?></h3>
+                        <p class="text-sm text-slate-500">Total Earnings Estimation</p>
+                        <?php
+                        $stmt = $db->prepare("SELECT COUNT(*) FROM appointments WHERE doctor_id = ? AND status IN ('confirmed', 'completed')");
+                        $stmt->execute([$doctor_id]);
+                        $earned_count = $stmt->fetchColumn();
+                        ?>
+                        <h3 class="text-2xl font-bold text-slate-900">TZS <?php echo number_format($earned_count * $doctor['consultation_fee'], 0); ?></h3>
                     </div>
                 </div>
             </div>
@@ -150,7 +169,26 @@ $today_appts = $stmt->fetchColumn();
                                         </span>
                                     </td>
                                     <td class="py-4">
-                                        <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-bold">View Details</a>
+                                        <?php if ($appt['status'] === 'pending'): ?>
+                                            <form method="POST" class="flex gap-2">
+                                                <input type="hidden" name="appointment_id" value="<?php echo $appt['id']; ?>">
+                                                <button type="submit" name="appt_action" value="confirm" class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold hover:bg-emerald-200 transition-colors">
+                                                    Approve
+                                                </button>
+                                                <button type="submit" name="appt_action" value="cancel" class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold hover:bg-red-200 transition-colors">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        <?php elseif ($appt['status'] === 'confirmed'): ?>
+                                             <form method="POST">
+                                                <input type="hidden" name="appointment_id" value="<?php echo $appt['id']; ?>">
+                                                <button type="submit" name="appt_action" value="cancel" class="text-red-500 hover:text-red-700 text-xs font-bold transition-colors">
+                                                    Cancel Appointment
+                                                </button>
+                                            </form>
+                                        <?php else: ?>
+                                            <span class="text-slate-400 text-xs italic">No actions available</span>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
