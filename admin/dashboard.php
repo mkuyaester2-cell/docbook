@@ -22,21 +22,39 @@ if (isset($_POST['action']) && isset($_POST['doctor_id'])) {
     $doctor_id = $_POST['doctor_id'];
     $status = ($action === 'approve') ? 'approved' : 'rejected';
     
-    $stmt = $db->prepare("UPDATE doctors SET registration_status = ? WHERE id = ?");
-    $stmt->execute([$status, $doctor_id]);
-    Session::setFlash('success', 'Doctor registration ' . $status . ' successfully.');
+    // Check if column exists before trying to update
+    $columnCheck = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+    if ($columnCheck) {
+        $stmt = $db->prepare("UPDATE doctors SET registration_status = ? WHERE id = ?");
+        $stmt->execute([$status, $doctor_id]);
+        Session::setFlash('success', 'Doctor registration ' . $status . ' successfully.');
+    } else {
+        Session::setFlash('error', 'Database migration pending. Please run fix_live_db.php');
+    }
     header("Location: dashboard.php");
     exit;
 }
 
 // Stats
 $total_doctors = $db->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
-$pending_doctors = $db->query("SELECT COUNT(*) FROM doctors WHERE registration_status = 'pending'")->fetchColumn();
+$pending_doctors = 0;
+try {
+    $columnCheck = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+    if ($columnCheck) {
+        $pending_doctors = $db->query("SELECT COUNT(*) FROM doctors WHERE registration_status = 'pending'")->fetchColumn();
+    }
+} catch (Exception $e) {}
 $total_patients = $db->query("SELECT COUNT(*) FROM patients")->fetchColumn();
 $total_appointments = $db->query("SELECT COUNT(*) FROM appointments")->fetchColumn();
 
 // Fetch Pending Doctors
-$pending_list = $db->query("SELECT d.*, u.email FROM doctors d JOIN users u ON d.user_id = u.id WHERE d.registration_status = 'pending' ORDER BY d.created_at DESC")->fetchAll();
+$pending_list = [];
+try {
+    $columnCheck = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+    if ($columnCheck) {
+        $pending_list = $db->query("SELECT d.*, u.email FROM doctors d JOIN users u ON d.user_id = u.id WHERE d.registration_status = 'pending' ORDER BY d.created_at DESC")->fetchAll();
+    }
+} catch (Exception $e) {}
 
 // Fetch Recent Appointments with Doctor and Patient info
 $appointments = $db->query("SELECT a.*, p.full_name as patient_name, d.full_name as doctor_name 
@@ -216,6 +234,10 @@ $appointments = $db->query("SELECT a.*, p.full_name as patient_name, d.full_name
                     <div class="space-y-4">
                         <?php
                         $all_docs = $db->query("SELECT * FROM doctors ORDER BY full_name ASC LIMIT 5")->fetchAll();
+                        
+                        // Check if status label should be shown
+                        $hasRegistrationStatus = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+                        
                         foreach ($all_docs as $d): ?>
                             <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50">
                                 <div class="flex items-center gap-3">
@@ -227,9 +249,11 @@ $appointments = $db->query("SELECT a.*, p.full_name as patient_name, d.full_name
                                         <div class="text-[10px] text-slate-500"><?php echo htmlspecialchars($d['specialization']); ?></div>
                                     </div>
                                 </div>
+                                <?php if ($hasRegistrationStatus): ?>
                                 <span class="px-2 py-1 rounded text-[10px] font-bold uppercase <?php echo $d['registration_status'] === 'approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; ?>">
                                     <?php echo $d['registration_status']; ?>
                                 </span>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     </div>

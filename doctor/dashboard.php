@@ -14,29 +14,33 @@ $stmt->execute([Session::get('user_id')]);
 $doctor = $stmt->fetch();
 $doctor_id = $doctor['id'];
 
-// Check approval status
-if ($doctor['registration_status'] === 'pending') {
-    define('PAGE_TITLE', 'Pending Approval');
-    require_once __DIR__ . '/../includes/header.php';
-    echo '<div class="max-w-7xl mx-auto px-4 py-12"><div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 rounded-2xl text-center shadow-sm">
-            <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
-            <h2 class="text-2xl font-bold text-yellow-800 mb-2">Account Pending Approval</h2>
-            <p class="text-yellow-700 max-w-md mx-auto">Your medical credentials are currently being verified by our administration. You will have full access to your dashboard once approved.</p>
-            <div class="mt-8"><a href="../logout.php" class="text-yellow-800 font-bold hover:underline">Sign Out</a></div>
-          </div></div>';
-    require_once __DIR__ . '/../includes/footer.php';
-    exit;
-} elseif ($doctor['registration_status'] === 'rejected') {
-    define('PAGE_TITLE', 'Registration Rejected');
-    require_once __DIR__ . '/../includes/header.php';
-    echo '<div class="max-w-7xl mx-auto px-4 py-12"><div class="bg-red-50 border-l-4 border-red-400 p-8 rounded-2xl text-center shadow-sm">
-            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-circle-xmark"></i></div>
-            <h2 class="text-2xl font-bold text-red-800 mb-2">Registration Rejected</h2>
-            <p class="text-red-700 max-w-md mx-auto">Unfortunately, your registration request has been declined. Please contact support for more information.</p>
-            <div class="mt-8"><a href="../logout.php" class="text-red-800 font-bold hover:underline">Sign Out</a></div>
-          </div></div>';
-    require_once __DIR__ . '/../includes/footer.php';
-    exit;
+// Check approval status only if column exists
+$hasRegistrationStatus = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+
+if ($hasRegistrationStatus) {
+    if ($doctor['registration_status'] === 'pending') {
+        define('PAGE_TITLE', 'Pending Approval');
+        require_once __DIR__ . '/../includes/header.php';
+        echo '<div class="max-w-7xl mx-auto px-4 py-12"><div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 rounded-2xl text-center shadow-sm">
+                <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <h2 class="text-2xl font-bold text-yellow-800 mb-2">Account Pending Approval</h2>
+                <p class="text-yellow-700 max-w-md mx-auto">Your medical credentials are currently being verified by our administration. You will have full access to your dashboard once approved.</p>
+                <div class="mt-8"><a href="../logout.php" class="text-yellow-800 font-bold hover:underline">Sign Out</a></div>
+              </div></div>';
+        require_once __DIR__ . '/../includes/footer.php';
+        exit;
+    } elseif ($doctor['registration_status'] === 'rejected') {
+        define('PAGE_TITLE', 'Registration Rejected');
+        require_once __DIR__ . '/../includes/header.php';
+        echo '<div class="max-w-7xl mx-auto px-4 py-12"><div class="bg-red-50 border-l-4 border-red-400 p-8 rounded-2xl text-center shadow-sm">
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-circle-xmark"></i></div>
+                <h2 class="text-2xl font-bold text-red-800 mb-2">Registration Rejected</h2>
+                <p class="text-red-700 max-w-md mx-auto">Unfortunately, your registration request has been declined. Please contact support for more information.</p>
+                <div class="mt-8"><a href="../logout.php" class="text-red-800 font-bold hover:underline">Sign Out</a></div>
+              </div></div>';
+        require_once __DIR__ . '/../includes/footer.php';
+        exit;
+    }
 }
 
 define('PAGE_TITLE', 'Doctor Dashboard');

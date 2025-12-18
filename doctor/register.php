@@ -45,8 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             // 2. Create Doctor Profile (Status: Pending)
-            $stmt = $db->prepare("INSERT INTO doctors (user_id, full_name, specialization, qualification, experience_years, phone, bio, clinic_id, consultation_fee, registration_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
-            $stmt->execute([$user_id, $fullname, $specialization, $qualification, $experience, $phone, $bio, $clinic_id, $consultation_fee]);
+            $hasRegistrationStatus = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+            
+            if ($hasRegistrationStatus) {
+                $stmt = $db->prepare("INSERT INTO doctors (user_id, full_name, specialization, qualification, experience_years, phone, bio, clinic_id, consultation_fee, registration_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
+                $stmt->execute([$user_id, $fullname, $specialization, $qualification, $experience, $phone, $bio, $clinic_id, $consultation_fee]);
+            } else {
+                // If column doesn't exist, insert without it (backwards compatibility)
+                $stmt = $db->prepare("INSERT INTO doctors (user_id, full_name, specialization, qualification, experience_years, phone, bio, clinic_id, consultation_fee) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$user_id, $fullname, $specialization, $qualification, $experience, $phone, $bio, $clinic_id, $consultation_fee]);
+            }
             
             $db->commit();
             

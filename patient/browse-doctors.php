@@ -15,7 +15,17 @@ $query = "SELECT d.*, c.name as clinic_name, a.city, a.street_address
           FROM doctors d
           JOIN clinics c ON d.clinic_id = c.id
           JOIN addresses a ON c.address_id = a.id
-          WHERE d.registration_status = 'approved'";
+          WHERE 1=1";
+
+// Check if registration_status column exists to avoid crashing on live server
+try {
+    $columnCheck = $db->query("SHOW COLUMNS FROM doctors LIKE 'registration_status'")->fetch();
+    if ($columnCheck) {
+        $query .= " AND d.registration_status = 'approved'";
+    }
+} catch (Exception $e) {
+    // Column doesn't exist yet, show all doctors
+}
 $params = [];
 
 if ($search) {
