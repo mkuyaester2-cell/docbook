@@ -37,9 +37,9 @@ require_once __DIR__ . '/includes/header.php';
                     Book appointments with top-rated doctors in seconds. No holding on the line, no waiting rooms. Just modern healthcare designed for you.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                    <a href="patient/register.php" class="inline-flex justify-center items-center px-8 py-4 text-lg font-semibold rounded-full text-white bg-primary-600 hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40 hover:-translate-y-1 w-full sm:w-auto">
+                    <a href="register-role.php" class="group relative inline-flex justify-center items-center px-8 py-4 text-lg font-semibold rounded-full text-white bg-primary-600 hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40 hover:-translate-y-1 w-full sm:w-auto">
                         Get Started
-                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                        <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                     </a>
                     <a href="patient/browse-doctors.php" class="inline-flex justify-center items-center px-8 py-4 text-lg font-semibold rounded-full text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all hover:-translate-y-1 shadow-sm w-full sm:w-auto">
                         Find a Doctor

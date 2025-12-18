@@ -102,8 +102,8 @@ $userName = $isLoggedIn ? Session::get('full_name') : 'User'; // You might need 
                 <?php else: ?>
                     <div class="flex items-center space-x-4">
                         <a href="<?php echo APP_URL; ?>/login.php" class="text-slate-600 hover:text-primary-600 font-medium transition-colors">Login</a>
-                        <a href="<?php echo APP_URL; ?>/patient/register.php" class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40 transform hover:-translate-y-0.5">
-                            Book Now
+                        <a href="<?php echo APP_URL; ?>/register-role.php" class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full font-medium transition-all shadow-lg shadow-primary-500/30 hover:shadow-primary-600/40 transform hover:-translate-y-0.5">
+                            Join Now
                         </a>
                     </div>
                 <?php endif; ?>
@@ -151,8 +151,8 @@ $userName = $isLoggedIn ? Session::get('full_name') : 'User'; // You might need 
                     <a href="<?php echo APP_URL; ?>/login.php" class="block w-full text-center px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-bold hover:bg-slate-50">
                         Login
                     </a>
-                    <a href="<?php echo APP_URL; ?>/patient/register.php" class="block w-full text-center px-4 py-3 rounded-xl bg-primary-600 text-white font-bold hover:bg-primary-700 shadow-lg shadow-primary-500/30">
-                        Book Now
+                    <a href="<?php echo APP_URL; ?>/register-role.php" class="block w-full text-center px-4 py-3 rounded-xl bg-primary-600 text-white font-bold hover:bg-primary-700 shadow-lg shadow-primary-500/30">
+                        Join Now
                     </a>
                 </div>
             <?php endif; ?>

@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="text-center mt-4">
             <p class="text-sm text-slate-600">
                 Don't have an account? 
-                <a href="patient/register.php" class="font-medium text-primary-600 hover:text-primary-500">Register as Patient</a>
+                <a href="register-role.php" class="font-medium text-primary-600 hover:text-primary-500">Register Now</a>
             </p>
         </div>
     </div>
