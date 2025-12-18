@@ -55,6 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $db->prepare("INSERT INTO doctors (user_id, full_name, specialization, qualification, experience_years, phone, bio, clinic_id, consultation_fee) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$user_id, $fullname, $specialization, $qualification, $experience, $phone, $bio, $clinic_id, $consultation_fee]);
             }
+            $doctor_id = $db->lastInsertId();
+
+            // 3. Create Default Availability (Mon-Fri, 9AM-2PM)
+            $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '14:00:00', 30)");
+            for ($day = 1; $day <= 5; $day++) {
+                $stmt->execute([$doctor_id, $day]);
+            }
             
             $db->commit();
             

@@ -8,16 +8,8 @@ Auth::requireRole('admin');
 
 $db = Database::getInstance();
 
-define('PAGE_TITLE', 'Admin Dashboard');
-require_once __DIR__ . '/../includes/header.php';
-
-// Get Admin info
-$stmt = $db->prepare("SELECT full_name FROM admins WHERE user_id = ?");
-$stmt->execute([Session::get('user_id')]);
-$admin = $stmt->fetch();
-
-// Handle Approval/Rejection
-if (isset($_POST['action']) && isset($_POST['doctor_id'])) {
+// Handle Approval/Rejection - MUST BE BEFORE ANY HTML OR HEADER
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && isset($_POST['doctor_id'])) {
     $action = $_POST['action'];
     $doctor_id = $_POST['doctor_id'];
     $status = ($action === 'approve') ? 'approved' : 'rejected';
@@ -34,6 +26,16 @@ if (isset($_POST['action']) && isset($_POST['doctor_id'])) {
     header("Location: dashboard.php");
     exit;
 }
+
+define('PAGE_TITLE', 'Admin Dashboard');
+require_once __DIR__ . '/../includes/header.php';
+
+// Get Admin info
+$stmt = $db->prepare("SELECT full_name FROM admins WHERE user_id = ?");
+$stmt->execute([Session::get('user_id')]);
+$admin = $stmt->fetch();
+
+
 
 // Stats
 $total_doctors = $db->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
