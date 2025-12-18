@@ -22,12 +22,27 @@ try {
     $doctorCount = $db->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
     $patientCount = $db->query("SELECT COUNT(*) FROM patients")->fetchColumn();
     $adminCount = $db->query("SELECT COUNT(*) FROM users WHERE user_type = 'admin'")->fetchColumn();
+    $clinicCount = $db->query("SELECT COUNT(*) FROM clinics")->fetchColumn();
 
     echo "- Total Users: <b>$userCount</b><br>";
     echo "- Admins: <b>$adminCount</b><br>";
     echo "- Doctors: <b>$doctorCount</b><br>";
     echo "- Patients: <b>$patientCount</b><br>";
+    echo "- Clinics: <b>$clinicCount</b><br>";
     echo "<br>";
+
+    if ($clinicCount == 0) {
+        echo "<span style='color:red; font-weight:bold;'>WARNING: No clinics found! Doctors cannot register without a clinic.</span><br>";
+        echo "<a href='fix_live_db.php?seed_clinic=1'>[Create a Default Clinic]</a><br><br>";
+    }
+
+    if (isset($_GET['seed_clinic'])) {
+        echo "<b>Creating Default Clinic...</b><br>";
+        $db->exec("INSERT IGNORE INTO addresses (street_address, city, state, postal_code, country) VALUES ('123 Health St', 'Dar es Salaam', 'TZ', '0000', 'Tanzania')");
+        $addrId = $db->lastInsertId();
+        $db->exec("INSERT INTO clinics (name, address_id, phone, email, created_by) VALUES ('General Medical Center', $addrId, '0700000000', 'clinic@example.com', 1)");
+        echo "<span style='color:green'>Default clinic created!</span><br>";
+    }
 
     // 1. Handle Admin Seeding
     if (isset($_GET['seed_admin'])) {
@@ -63,6 +78,27 @@ try {
         echo "The 'registration_status' column exists.<br>";
     }
 
+    // 3. Fix Missing Availability
+    if (isset($_GET['fix_availability'])) {
+        echo "<b>Repairing Doctor Schedules...</b><br>";
+        $doctors = $db->query("SELECT id, full_name FROM doctors")->fetchAll();
+        $fixedCount = 0;
+        
+        foreach ($doctors as $doc) {
+            $checkAvail = $db->prepare("SELECT COUNT(*) FROM doctor_availability WHERE doctor_id = ?");
+            $checkAvail->execute([$doc['id']]);
+            if ($checkAvail->fetchColumn() == 0) {
+                echo "- Adding default schedule for " . htmlspecialchars($doc['full_name']) . "...<br>";
+                $stmt = $db->prepare("INSERT INTO doctor_availability (doctor_id, day_of_week, start_time, end_time, slot_duration) VALUES (?, ?, '09:00:00', '14:00:00', 30)");
+                for ($day = 1; $day <= 5; $day++) {
+                    $stmt->execute([$doc['id'], $day]);
+                }
+                $fixedCount++;
+            }
+        }
+        echo "<span style='color:green'>Fixed $fixedCount doctors!</span><br>";
+    }
+
     // List recent users to prove they are here
     echo "<br><b>Recently Registered Users (Last 5):</b><br>";
     $recentUsers = $db->query("SELECT email, user_type, created_at FROM users ORDER BY created_at DESC LIMIT 5")->fetchAll();
@@ -77,9 +113,10 @@ try {
     echo "<br><div style='padding:20px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px;'>";
     echo "<b>Troubleshooting & Utilities:</b><br>";
     echo "1. <a href='fix_live_db.php?seed_admin=1' style='color:red; font-weight:bold;'>CLICK HERE TO RESET/CREATE ADMIN (admin@docbook.co.tz / admin123)</a><br>";
-    echo "2. <a href='patient/browse-doctors.php'>Go to Find Doctors</a><br>";
-    echo "3. <a href='login.php'>Go to Login Page</a><br>";
-    echo "4. <a href='index.php'>Go to Homepage</a><br>";
+    echo "2. <a href='fix_live_db.php?fix_availability=1' style='color:blue; font-weight:bold;'>CLICK HERE TO FIX MISSING DOCTOR TIMES/DATES</a><br>";
+    echo "3. <a href='patient/browse-doctors.php'>Go to Find Doctors</a><br>";
+    echo "4. <a href='login.php'>Go to Login Page</a><br>";
+    echo "5. <a href='index.php'>Go to Homepage</a><br>";
     echo "</div>";
     
     echo "<br><b>Current URL Settings:</b><br>";
