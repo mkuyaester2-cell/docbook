@@ -2,10 +2,10 @@
 // config/Database.php
 
 class Database {
-    private $host = DB_HOST;
-    private $db_name = DB_NAME;
-    private $username = DB_USER;
-    private $password = DB_PASS;
+    private $host = 'localhost';
+    private $db_name = 'webtech_2025A_ester_mkuya';
+    private $username = 'ester.mkuya';
+    private $password = '95079507';
     private $conn;
 
     // Singleton instance
