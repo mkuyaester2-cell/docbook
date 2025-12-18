@@ -10,9 +10,6 @@ if (Auth::isLoggedIn()) {
     exit;
 }
 
-define('PAGE_TITLE', 'Patient Registration');
-require_once __DIR__ . '/../includes/header.php';
-
 $error = '';
 $success = '';
 
@@ -71,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+define('PAGE_TITLE', 'Patient Registration');
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">

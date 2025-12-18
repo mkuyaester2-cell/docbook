@@ -6,11 +6,7 @@ require_once __DIR__ . '/../includes/Session.php';
 
 Auth::requireRole('doctor');
 
-define('PAGE_TITLE', 'Doctor Dashboard');
-require_once __DIR__ . '/../includes/header.php';
-
 $db = Database::getInstance();
-$doctor_id = null;
 
 // Get doctor profile
 $stmt = $db->prepare("SELECT * FROM doctors WHERE user_id = ?");
@@ -20,6 +16,8 @@ $doctor_id = $doctor['id'];
 
 // Check approval status
 if ($doctor['registration_status'] === 'pending') {
+    define('PAGE_TITLE', 'Pending Approval');
+    require_once __DIR__ . '/../includes/header.php';
     echo '<div class="max-w-7xl mx-auto px-4 py-12"><div class="bg-yellow-50 border-l-4 border-yellow-400 p-8 rounded-2xl text-center shadow-sm">
             <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
             <h2 class="text-2xl font-bold text-yellow-800 mb-2">Account Pending Approval</h2>
@@ -29,6 +27,8 @@ if ($doctor['registration_status'] === 'pending') {
     require_once __DIR__ . '/../includes/footer.php';
     exit;
 } elseif ($doctor['registration_status'] === 'rejected') {
+    define('PAGE_TITLE', 'Registration Rejected');
+    require_once __DIR__ . '/../includes/header.php';
     echo '<div class="max-w-7xl mx-auto px-4 py-12"><div class="bg-red-50 border-l-4 border-red-400 p-8 rounded-2xl text-center shadow-sm">
             <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-circle-xmark"></i></div>
             <h2 class="text-2xl font-bold text-red-800 mb-2">Registration Rejected</h2>
@@ -38,6 +38,9 @@ if ($doctor['registration_status'] === 'pending') {
     require_once __DIR__ . '/../includes/footer.php';
     exit;
 }
+
+define('PAGE_TITLE', 'Doctor Dashboard');
+require_once __DIR__ . '/../includes/header.php';
 
 // Stats
 $stmt = $db->prepare("SELECT COUNT(*) FROM appointments WHERE doctor_id = ? AND status = 'pending'");

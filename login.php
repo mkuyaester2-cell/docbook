@@ -1,7 +1,10 @@
 <?php
 // login.php
-define('PAGE_TITLE', 'Login');
-require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/Auth.php';
+require_once __DIR__ . '/includes/Session.php';
+require_once __DIR__ . '/config/config.php';
+
+$auth = new Auth();
 
 // Redirect if already logged in
 if (Auth::isLoggedIn()) {
@@ -16,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    $auth = new Auth();
     if ($auth->login($email, $password)) {
         // Redirect based on role
         $role = Session::get('user_type');
@@ -26,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Invalid email or password.';
     }
 }
+
+define('PAGE_TITLE', 'Login');
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50">

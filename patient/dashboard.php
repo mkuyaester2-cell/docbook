@@ -1,13 +1,17 @@
 <?php
 // patient/dashboard.php
-define('PAGE_TITLE', 'My Dashboard');
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../includes/Auth.php';
+require_once __DIR__ . '/../includes/Session.php';
 
 // Ensure user is logged in as patient
 Auth::requireRole('patient');
 
 $user_id = Auth::id();
 $db = Database::getInstance();
+
+define('PAGE_TITLE', 'My Dashboard');
+require_once __DIR__ . '/../includes/header.php';
 
 // Fetch Patient ID
 $stmt = $db->prepare("SELECT id, full_name FROM patients WHERE user_id = ?");

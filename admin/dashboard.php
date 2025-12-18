@@ -6,10 +6,10 @@ require_once __DIR__ . '/../includes/Session.php';
 
 Auth::requireRole('admin');
 
+$db = Database::getInstance();
+
 define('PAGE_TITLE', 'Admin Dashboard');
 require_once __DIR__ . '/../includes/header.php';
-
-$db = Database::getInstance();
 
 // Get Admin info
 $stmt = $db->prepare("SELECT full_name FROM admins WHERE user_id = ?");
