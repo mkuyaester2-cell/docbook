@@ -9,7 +9,7 @@ define('DB_NAME', 'webtech_2025A_ester_mkuya');
 
 // Application Settings
 define('APP_NAME', 'DocBook');
-define('APP_URL', 'http://169.239.251.102:311/~ester.mkuya/');
+define('APP_URL', 'http://169.239.251.102:311/~ester.mkuya/doctor-appointment-2');
 
 // Error Reporting (Enable for development)
 ini_set('display_errors', 1);
